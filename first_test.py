@@ -1,20 +1,53 @@
-from math import e
 from playwright.sync_api import sync_playwright, expect
 
 with sync_playwright() as p:
+
     browser = p.chromium.launch(headless=False)
     page = browser.new_page()
     page.goto('https://www.decathlon.pl/')
-    expect(page.get_by_role("button", name="Zaakceptuj wszystko")).to_be_visible()
-    page.get_by_role("button", name="Zaakceptuj wszystko").click()
-    expect(page.get_by_role("button", name="Otwórz boczną nawigację strony")).to_be_visible()
+    
+    expect(page.locator("#didomi-notice-agree-button")).to_be_visible()
+    page.locator("#didomi-notice-agree-button").click()
+
     page.get_by_role("button", name="Otwórz boczną nawigację strony").click()
-    expect(page.get_by_role("button", name="Wszystkie sporty")).to_be_visible()
     page.get_by_role("button", name="Wszystkie sporty").click()
-    expect(page.locator("#highlight-0")).to_be_visible()
     page.locator("#highlight-0").click()
-    expect(page.locator("#cat-30")).to_be_visible()
     page.locator("#cat-30").click()
-    expect(page.locator('text=Rowery górskie')).to_be_visible()
-    page.click('text=Rowery górskie');
-    page.pause();
+    test = page.locator(".sublevel a span").filter(has_text="Rowery górskie")
+    test.click()
+
+    expect(page.locator("#list-sort-select")).to_be_visible()
+    page.locator("#list-sort-select").click()
+
+    page.keyboard.press("ArrowDown")
+    page.keyboard.press("ArrowDown")
+    page.keyboard.press("Enter")
+
+    page.wait_for_timeout(1500)
+
+    expect(page.locator("a.filter-element--checkbox span").filter(has_text="Decathlon")).to_be_visible()
+    page.locator("a.filter-element--checkbox span").filter(has_text="Decathlon").click()
+
+    page.wait_for_timeout(1500)
+
+
+    product_links = page.locator("a.dpb-product-link")
+    rows = []
+
+    for i in range(product_links.count()):
+        link = product_links.nth(i)
+
+        marka = link.locator("strong").inner_text().strip()
+        model = link.locator("span").inner_text().strip()
+
+        price_locator = link.locator("css=+ div.price-wrapper span.vtmn-mr-1").first
+        cena = price_locator.inner_text().replace('\xa0', ' ').strip()
+
+        rows.append({
+            "marka": marka,
+            "model": model,
+            "cena": cena
+        })
+
+    print(rows)
+
