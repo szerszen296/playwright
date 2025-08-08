@@ -16,20 +16,11 @@ with sync_playwright() as p:
     test = page.locator(".sublevel a span").filter(has_text="Rowery górskie")
     test.click()
 
+    expect(page.locator("#DecathlonPartner")).to_be_visible()
+    page.locator("#DecathlonPartner").check(force = True)
+
     expect(page.locator("#list-sort-select")).to_be_visible()
-    page.locator("#list-sort-select").click()
-
-    page.keyboard.press("ArrowDown")
-    page.keyboard.press("ArrowDown")
-    page.keyboard.press("Enter")
-
-    page.wait_for_timeout(1500)
-
-    expect(page.locator("a.filter-element--checkbox span").filter(has_text="Decathlon")).to_be_visible()
-    page.locator("a.filter-element--checkbox span").filter(has_text="Decathlon").click()
-
-    page.wait_for_timeout(1500)
-
+    page.locator("#list-sort-select").select_option(value = '2')
 
     product_links = page.locator("a.dpb-product-link")
     rows = []
@@ -50,4 +41,3 @@ with sync_playwright() as p:
         })
 
     print(rows)
-
