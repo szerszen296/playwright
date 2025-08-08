@@ -37,16 +37,16 @@ with sync_playwright() as p:
     for i in range(product_links.count()):
         link = product_links.nth(i)
 
-        marka = link.locator("strong").inner_text().strip()
+        brand = link.locator("strong").inner_text().strip()
         model = link.locator("span").inner_text().strip()
 
         price_locator = link.locator("css=+ div.price-wrapper span.vtmn-mr-1").first
-        cena = price_locator.inner_text().replace('\xa0', ' ').strip()
+        price = price_locator.inner_text().replace('\xa0', ' ').strip()
 
         rows.append({
-            "marka": marka,
+            "marka": brand,
             "model": model,
-            "cena": cena
+            "cena": price
         })
 
     print(rows)
