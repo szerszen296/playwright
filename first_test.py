@@ -1,5 +1,7 @@
 from playwright.sync_api import sync_playwright, expect
 import time
+import pandas as pd
+import openpyxl
 
 with sync_playwright() as p:
 
@@ -62,5 +64,7 @@ with sync_playwright() as p:
             "waga": weight
         })
 
-    print(rows)
+    df = pd.DataFrame(rows)
+    print(df)
+    df.to_excel("decathlon_bikes.xlsx", sheet_name="Bikes")
     page.pause()
